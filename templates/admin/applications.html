@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}View Applications - Placement Portal{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">View Applications</h1>
+
+<!-- Applications Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Department</th>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Applied Date</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for app in applications %}
+                    <tr>
+                        <td>{{ app.id }}</td>
+                        <td>{{ app.student_name }}</td>
+                        <td>{{ app.department }}</td>
+                        <td>{{ app.company_name }}</td>
+                        <td>{{ app.job_title }}</td>
+                        <td>{{ app.applied_at }}</td>
+                        <td>
+                            {% if app.status == 'Applied' %}
+                                <span class="badge bg-primary">Applied</span>
+                            {% elif app.status == 'Shortlisted' %}
+                                <span class="badge bg-warning text-dark">Shortlisted</span>
+                            {% elif app.status == 'Selected' %}
+                                <span class="badge bg-success">Selected</span>
+                            {% elif app.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ app.remarks or '-' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

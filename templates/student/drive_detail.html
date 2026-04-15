@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}{{ drive.job_title }} - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <!-- Drive Details Card -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4>{{ drive.job_title }}</h4>
+                <p class="mb-0 text-muted">{{ drive.company_name }}</p>
+            </div>
+            <div class="card-body">
+                {% if drive.job_description %}
+                    <h5>Job Description</h5>
+                    <p class="text-muted">{{ drive.job_description }}</p>
+                {% endif %}
+
+                {% if drive.eligibility_criteria %}
+                    <h5>Eligibility Criteria</h5>
+                    <p class="text-muted">{{ drive.eligibility_criteria }}</p>
+                {% endif %}
+
+                <div class="row">
+                    {% if drive.location %}
+                        <div class="col-md-6 mb-3">
+                            <strong><i class="bi bi-geo-alt"></i> Location:</strong> {{ drive.location }}
+                        </div>
+                    {% endif %}
+                    {% if drive.salary %}
+                        <div class="col-md-6 mb-3">
+                            <strong><i class="bi bi-currency-rupee"></i> Salary/CTC:</strong> {{ drive.salary }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <strong><i class="bi bi-calendar"></i> Application Deadline:</strong> {{ drive.application_deadline }}
+                </div>
+
+                {% if drive.website %}
+                    <div class="mb-3">
+                        <strong>Company Website:</strong> <a href="{{ drive.website }}" target="_blank">{{ drive.website }}</a>
+                    </div>
+                {% endif %}
+
+                {% if drive.company_desc %}
+                    <div class="mt-4">
+                        <h5>About {{ drive.company_name }}</h5>
+                        <p class="text-muted">{{ drive.company_desc }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Application Status -->
+        {% if already_applied %}
+            <div class="alert alert-info">
+                <h5><i class="bi bi-check-circle"></i> Already Applied</h5>
+                <p>You have already applied to this drive. Check your application status in the <a href="{{ url_for('student.history') }}">History</a> page.</p>
+            </div>
+        {% elif deadline_passed %}
+            <div class="alert alert-warning">
+                <h5><i class="bi bi-exclamation-triangle"></i> Applications Closed</h5>
+                <p>The application deadline for this drive has passed.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-md-4">
+        <!-- Apply Card -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Apply Now</h5>
+            </div>
+            <div class="card-body">
+                {% if not already_applied and not deadline_passed %}
+                    <form method="POST" action="{{ url_for('student.apply_drive', id=drive.id) }}">
+                        <div class="alert alert-success">
+                            <h6>Ready to apply?</h6>
+                            <p class="mb-0">By clicking "Apply Now", you will submit your application for this position.</p>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Apply Now</button>
+                    </form>
+                {% endif %}
+
+                <hr>
+
+                <h6>Drive Information</h6>
+                <p class="mb-1"><strong>Drive ID:</strong> {{ drive.id }}</p>
+                <p class="mb-1"><strong>Status:</strong>
+                    {% if drive.status == 'Approved' %}
+                        <span class="badge bg-success">Approved</span>
+                    {% elif drive.status == 'Rejected' %}
+                        <span class="badge bg-danger">Rejected</span>
+                    {% elif drive.status == 'Closed' %}
+                        <span class="badge bg-secondary">Closed</span>
+                    {% else %}
+                        <span class="badge bg-warning">Pending</span>
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="card-title">Quick Links</h6>
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('student.dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-arrow-left"></i> Back to Dashboard
+                    </a>
+                    <a href="{{ url_for('student.history') }}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-clock-history"></i> View My Applications
+                    </a>
+                    {% if student.resume_path %}
+                        <a href="{{ url_for('static', filename=student.resume_path) }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-file-earmark-pdf"></i> My Resume
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

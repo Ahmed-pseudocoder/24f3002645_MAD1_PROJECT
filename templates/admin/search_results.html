@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Search Results</h1>
+    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+{% if query %}
+    <p class="text-muted">Search query: "{{ query }}"</p>
+{% endif %}
+
+<div class="row">
+    <!-- Students Search Results -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Students Found</h5>
+            </div>
+            <div class="card-body">
+                {% if students %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Department</th>
+                                    <th>CGPA</th>
+                                    <th>Username</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students %}
+                                <tr>
+                                    <td>{{ student.id }}</td>
+                                    <td>{{ student.full_name }}</td>
+                                    <td>{{ student.email }}</td>
+                                    <td>{{ student.department }}</td>
+                                    <td>{{ student.cgpa }}</td>
+                                    <td>{{ student.username }}</td>
+                                    <td>
+                                        {% if student.is_active == 1 %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Blacklisted</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No students found matching your search.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Companies Search Results -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Companies Found</h5>
+            </div>
+            <div class="card-body">
+                {% if companies %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Company Name</th>
+                                    <th>HR Contact</th>
+                                    <th>Website</th>
+                                    <th>Status</th>
+                                    <th>Username</th>
+                                    <th>Account Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in companies %}
+                                <tr>
+                                    <td>{{ company.id }}</td>
+                                    <td>{{ company.company_name }}</td>
+                                    <td>{{ company.hr_contact }}</td>
+                                    <td>
+                                        {% if company.website %}
+                                            <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
+                                        {% else %}
+                                            <span class="text-muted">Not provided</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if company.approval_status == 'Approved' %}
+                                            <span class="badge bg-success">Approved</span>
+                                        {% elif company.approval_status == 'Rejected' %}
+                                            <span class="badge bg-danger">Rejected</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ company.username }}</td>
+                                    <td>
+                                        {% if company.is_active == 1 %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Blacklisted</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No companies found matching your search.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

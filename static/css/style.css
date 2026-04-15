@@ -1,0 +1,78 @@
+/* Status badge color helpers */
+.badge-applied      { background-color: #0d6efd; }
+.badge-shortlisted  { background-color: #ffc107; color: #000; }
+.badge-selected     { background-color: #198754; }
+.badge-rejected     { background-color: #dc3545; }
+.badge-pending      { background-color: #6c757d; }
+.badge-approved     { background-color: #198754; }
+.badge-closed       { background-color: #6c757d; }
+
+/* Stat cards on admin dashboard */
+.stat-card {
+    border-left: 4px solid #0d6efd;
+    transition: transform 0.2s;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* Resume link styling */
+.resume-link {
+    font-size: 0.85rem;
+    text-decoration: none;
+}
+
+/* Drive cards on student dashboard */
+.drive-card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: box-shadow 0.2s;
+}
+.drive-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Company status badges */
+.status-pending   { color: #ffc107; }
+.status-approved  { color: #198754; }
+.status-rejected  { color: #dc3545; }
+
+/* Dashboard cards */
+.dashboard-card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1.5rem;
+}
+
+/* Form improvements */
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Table hover effects */
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Action buttons in tables */
+.action-buttons .btn {
+    margin-right: 0.25rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .drive-card {
+        padding: 1rem;
+    }
+
+    .action-buttons .btn {
+        margin-bottom: 0.5rem;
+    }
+}

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Admin Dashboard</h1>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Students</h5>
+                <h2 class="text-primary">{{ student_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Approved Companies</h5>
+                <h2 class="text-success">{{ approved_company_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Drives</h5>
+                <h2 class="text-info">{{ drive_count }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="card-body">
+                <h5 class="card-title text-muted">Total Applications</h5>
+                <h2 class="text-warning">{{ application_count }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Pending Company Approvals -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Pending Company Approvals</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_companies %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Company</th>
+                                    <th>Contact</th>
+                                    <th>Username</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for company in pending_companies %}
+                                <tr>
+                                    <td>{{ company.id }}</td>
+                                    <td>{{ company.company_name }}</td>
+                                    <td>{{ company.hr_contact }}</td>
+                                    <td>{{ company.username }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('admin.approve_company', id=company.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin.reject_company', id=company.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No pending company approvals.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Drive Approvals -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Pending Drive Approvals</h5>
+            </div>
+            <div class="card-body">
+                {% if pending_drives %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Job Title</th>
+                                    <th>Company</th>
+                                    <th>Deadline</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for drive in pending_drives %}
+                                <tr>
+                                    <td>{{ drive.id }}</td>
+                                    <td>{{ drive.job_title }}</td>
+                                    <td>{{ drive.company_name }}</td>
+                                    <td>{{ drive.application_deadline }}</td>
+                                    <td>
+                                        <form method="POST" action="{{ url_for('admin.approve_drive', id=drive.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                        </form>
+                                        <form method="POST" action="{{ url_for('admin.reject_drive', id=drive.id) }}" class="d-inline">
+                                            <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <p class="text-muted">No pending drive approvals.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Drives - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Manage Drives</h1>
+</div>
+
+<!-- Drives Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Deadline</th>
+                        <th>Location</th>
+                        <th>Salary</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for drive in drives %}
+                    <tr>
+                        <td>{{ drive.id }}</td>
+                        <td>{{ drive.job_title }}</td>
+                        <td>{{ drive.company_name }}</td>
+                        <td>{{ drive.application_deadline }}</td>
+                        <td>{{ drive.location or 'Not specified' }}</td>
+                        <td>{{ drive.salary or 'Not specified' }}</td>
+                        <td>
+                            {% if drive.status == 'Approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif drive.status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% elif drive.status == 'Closed' %}
+                                <span class="badge bg-secondary">Closed</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ drive.created_at }}</td>
+                        <td>
+                            <!-- Approve/Reject only if pending -->
+                            {% if drive.status == 'Pending' %}
+                                <form method="POST" action="{{ url_for('admin.approve_drive', id=drive.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.reject_drive', id=drive.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

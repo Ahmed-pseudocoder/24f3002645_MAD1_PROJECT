@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Company Dashboard - Placement Portal{% endblock %}
+
+{% block content %}
+{% if company.approval_status != 'Approved' %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>Note:</strong> Your company account is pending admin approval. You cannot create drives until your account is approved.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endif %}
+
+<!-- Company Info Card -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">Company Information</h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4>{{ company.company_name }}</h4>
+                {% if company.approval_status == 'Approved' %}
+                    <span class="badge bg-success">Approved</span>
+                {% elif company.approval_status == 'Rejected' %}
+                    <span class="badge bg-danger">Rejected</span>
+                {% else %}
+                    <span class="badge bg-warning">Pending</span>
+                {% endif %}
+            </div>
+            <div class="col-md-4 text-end">
+                {% if company.approval_status == 'Approved' %}
+                    <a href="{{ url_for('company.create_drive') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create New Drive
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        <hr>
+        <p><strong>HR Contact:</strong> {{ company.hr_contact }}</p>
+        {% if company.website %}
+            <p><strong>Website:</strong> <a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+        {% endif %}
+        <p><strong>Description:</strong> {{ company.description }}</p>
+    </div>
+</div>
+
+<!-- My Placement Drives -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">My Placement Drives</h5>
+        {% if company.approval_status == 'Approved' %}
+            <a href="{{ url_for('company.create_drive') }}" class="btn btn-sm btn-primary">Create Drive</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        {% if drives %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Job Title</th>
+                            <th>Deadline</th>
+                            <th>Location</th>
+                            <th>Salary</th>
+                            <th>Status</th>
+                            <th>Applicants</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for drive in drives %}
+                        <tr>
+                            <td>{{ drive.id }}</td>
+                            <td>{{ drive.job_title }}</td>
+                            <td>{{ drive.application_deadline }}</td>
+                            <td>{{ drive.location or 'Not specified' }}</td>
+                            <td>{{ drive.salary or 'Not specified' }}</td>
+                            <td>
+                                {% if drive.status == 'Approved' %}
+                                    <span class="badge bg-success">Approved</span>
+                                {% elif drive.status == 'Rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% elif drive.status == 'Closed' %}
+                                    <span class="badge bg-secondary">Closed</span>
+                                {% else %}
+                                    <span class="badge bg-warning">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ drive.applicant_count }} applicant{{ drive.applicant_count != 1 and 's' or '' }}</span>
+                            </td>
+                            <td>
+                                <!-- View Applications -->
+                                <a href="{{ url_for('company.view_applications', id=drive.id) }}" class="btn btn-sm btn-outline-primary">
+                                    View Applications
+                                </a>
+
+                                <!-- Edit/Close -->
+                                {% if drive.status not in ['Rejected', 'Closed'] %}
+                                    <a href="{{ url_for('company.edit_drive', id=drive.id) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                                {% endif %}
+
+                                <!-- Close Drive -->
+                                {% if drive.status == 'Approved' %}
+                                    <form method="POST" action="{{ url_for('company.close_drive', id=drive.id) }}" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to close this drive? No more applications will be accepted.')">
+                                        <button type="submit" class="btn btn-sm btn-outline-warning">Close</button>
+                                    </form>
+                                {% endif %}
+
+                                <!-- Delete -->
+                                {% if drive.status not in ['Approved'] %}
+                                    <form method="POST" action="{{ url_for('company.delete_drive', id=drive.id) }}" class="d-inline"
+                                          onsubmit="return confirm('Are you sure you want to delete this drive? This action cannot be undone.')">
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No placement drives created yet. {% if company.approval_status == 'Approved' %}<a href="{{ url_for('company.create_drive') }}">Create your first drive</a>.{% endif %}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

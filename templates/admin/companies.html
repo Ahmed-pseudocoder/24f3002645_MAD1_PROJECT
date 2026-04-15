@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Companies - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Manage Companies</h1>
+    <a href="{{ url_for('admin.search') }}" class="btn btn-outline-primary">
+        <i class="bi bi-search"></i> Search
+    </a>
+</div>
+
+<!-- Search Form -->
+<form method="GET" action="{{ url_for('admin.search') }}" class="row g-3 mb-4">
+    <div class="col-md-6">
+        <input type="text" name="q" class="form-control" placeholder="Search companies by name or ID...">
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ url_for('admin.companies') }}" class="btn btn-secondary">Clear Search</a>
+    </div>
+</form>
+
+<!-- Companies Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Company Name</th>
+                        <th>HR Contact</th>
+                        <th>Website</th>
+                        <th>Status</th>
+                        <th>Username</th>
+                        <th>Account Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for company in companies %}
+                    <tr>
+                        <td>{{ company.id }}</td>
+                        <td>{{ company.company_name }}</td>
+                        <td>{{ company.hr_contact }}</td>
+                        <td>
+                            {% if company.website %}
+                                <a href="{{ company.website }}" target="_blank">{{ company.website }}</a>
+                            {% else %}
+                                <span class="text-muted">Not provided</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if company.approval_status == 'Approved' %}
+                                <span class="badge bg-success">Approved</span>
+                            {% elif company.approval_status == 'Rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% else %}
+                                <span class="badge bg-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ company.username }}</td>
+                        <td>
+                            {% if company.is_active == 1 %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Blacklisted</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Approve/Reject only if pending -->
+                            {% if company.approval_status == 'Pending' %}
+                                <form method="POST" action="{{ url_for('admin.approve_company', id=company.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.reject_company', id=company.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            {% endif %}
+
+                            <!-- Blacklist/Unblacklist -->
+                            {% if company.is_active == 1 %}
+                                <form method="POST" action="{{ url_for('admin.blacklist_company', id=company.id) }}" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to blacklist this company? This will also deactivate their account and close all their drives.')">
+                                    <button type="submit" class="btn btn-warning btn-sm">Blacklist</button>
+                                </form>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('admin.blacklist_company', id=company.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm" disabled>Blacklisted</button>
+                                </form>
+                            {% endif %}
+
+                            <!-- Delete -->
+                            <form method="POST" action="{{ url_for('admin.delete_company', id=company.id) }}" class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to delete this company? This action cannot be undone.')">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

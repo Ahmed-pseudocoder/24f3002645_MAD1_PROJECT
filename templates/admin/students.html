@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Students - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Manage Students</h1>
+    <a href="{{ url_for('admin.search') }}" class="btn btn-outline-primary">
+        <i class="bi bi-search"></i> Search
+    </a>
+</div>
+
+<!-- Search Form -->
+<form method="GET" action="{{ url_for('admin.search') }}" class="row g-3 mb-4">
+    <div class="col-md-6">
+        <input type="text" name="q" class="form-control" placeholder="Search students by name, email, phone, or ID...">
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+    <div class="col-md-3">
+        <a href="{{ url_for('admin.students') }}" class="btn btn-secondary">Clear Search</a>
+    </div>
+</form>
+
+<!-- Students Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>CGPA</th>
+                        <th>Username</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for student in students %}
+                    <tr>
+                        <td>{{ student.id }}</td>
+                        <td>{{ student.full_name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.department }}</td>
+                        <td>{{ student.cgpa }}</td>
+                        <td>{{ student.username }}</td>
+                        <td>
+                            {% if student.is_active == 1 %}
+                                <span class="badge bg-success">Active</span>
+                            {% else %}
+                                <span class="badge bg-danger">Blacklisted</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <!-- Blacklist/Activate Toggle -->
+                            {% if student.is_active == 1 %}
+                                <form method="POST" action="{{ url_for('admin.blacklist_student', id=student.id) }}" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to blacklist this student?')">
+                                    <button type="submit" class="btn btn-warning btn-sm">Blacklist</button>
+                                </form>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('admin.activate_student', id=student.id) }}" class="d-inline">
+                                    <button type="submit" class="btn btn-success btn-sm">Activate</button>
+                                </form>
+                            {% endif %}
+
+                            <!-- Delete -->
+                            <form method="POST" action="{{ url_for('admin.delete_student', id=student.id) }}" class="d-inline"
+                                  onsubmit="return confirm('Are you sure you want to delete this student? This action cannot be undone.')">
+                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

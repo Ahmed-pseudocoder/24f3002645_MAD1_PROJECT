@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}View Applications - Placement Portal{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>Applications for: {{ drive.job_title }}</h1>
+        <p class="text-muted">{{ drive.company_name }} • Deadline: {{ drive.application_deadline }}</p>
+    </div>
+    <a href="{{ url_for('company.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+</div>
+
+{% if applications %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Student Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Department</th>
+                            <th>CGPA</th>
+                            <th>Applied On</th>
+                            <th>Current Status</th>
+                            <th>Resume</th>
+                            <th>Update Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>{{ app.id }}</td>
+                            <td>{{ app.full_name }}</td>
+                            <td>{{ app.email }}</td>
+                            <td>{{ app.phone or '-' }}</td>
+                            <td>{{ app.department }}</td>
+                            <td>{{ app.cgpa }}</td>
+                            <td>{{ app.applied_at }}</td>
+                            <td>
+                                {% if app.status == 'Applied' %}
+                                    <span class="badge bg-primary">Applied</span>
+                                {% elif app.status == 'Shortlisted' %}
+                                    <span class="badge bg-warning text-dark">Shortlisted</span>
+                                {% elif app.status == 'Selected' %}
+                                    <span class="badge bg-success">Selected</span>
+                                {% elif app.status == 'Rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if app.resume_path %}
+                                    <a href="{{ url_for('static', filename=app.resume_path) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-file-earmark-pdf"></i> View Resume
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">No resume</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form method="POST" action="{{ url_for('company.update_application', id=app.id) }}" class="d-inline">
+                                    <input type="hidden" name="drive_id" value="{{ drive.id }}">
+                                    <select name="status" class="form-select form-select-sm d-inline" style="width: auto;">
+                                        <option value="Applied" {% if app.status == 'Applied' %}selected{% endif %}>Applied</option>
+                                        <option value="Shortlisted" {% if app.status == 'Shortlisted' %}selected{% endif %}>Shortlisted</option>
+                                        <option value="Selected" {% if app.status == 'Selected' %}selected{% endif %}>Selected</option>
+                                        <option value="Rejected" {% if app.status == 'Rejected' %}selected{% endif %}>Rejected</option>
+                                    </select>
+                                    <input type="text" name="remarks" class="form-control form-control-sm d-inline" style="width: 150px;" placeholder="Remarks">
+                                    <button type="submit" class="btn btn-sm btn-primary ms-2">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="card">
+        <div class="card-body text-center">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h4 class="mt-3">No applications yet</h4>
+            <p class="text-muted">Students will be able to apply once the drive is approved by the admin.</p>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
